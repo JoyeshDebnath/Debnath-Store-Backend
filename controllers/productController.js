@@ -1,6 +1,7 @@
 const Product = require("../models/productModel");
 const ErrorHander = require("../utils/error-handler");
 const CatchAsyncError = require("../middlewares/catchAsyncErrors");
+const ApiFeatures = require("../utils/apifeatures");
 //create a products ..ADMIN
 const createProduct = CatchAsyncError(async (req, res, next) => {
 	const product = await Product.create(req.body);
@@ -11,11 +12,17 @@ const createProduct = CatchAsyncError(async (req, res, next) => {
 });
 
 //get all products ..
+// ?set the filtering and searching  functionality
 const getAllProducts = CatchAsyncError(async (req, res) => {
-	const products = await Product.find({});
+	const apifeature = new ApiFeatures(Product.find({}), req.query)
+		.search()
+		.filter(); //api feature class
+
+	const products = await apifeature.query;
 	res.status(200).json({
 		success: true,
 		products,
+		noHits: products.length,
 	});
 	//res.status(200).json({ message: "Get all products route working fine " });
 });
