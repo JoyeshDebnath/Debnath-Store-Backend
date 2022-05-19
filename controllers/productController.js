@@ -15,6 +15,7 @@ const createProduct = CatchAsyncError(async (req, res, next) => {
 // ?set the filtering and searching  functionality
 const getAllProducts = CatchAsyncError(async (req, res) => {
 	const resultsPerPage = 5; //per page 5 items //
+	const productCount = await Product.countDocuments();
 
 	const apifeature = new ApiFeatures(Product.find({}), req.query)
 		.search()
@@ -25,7 +26,7 @@ const getAllProducts = CatchAsyncError(async (req, res) => {
 	res.status(200).json({
 		success: true,
 		products,
-		noHits: products.length,
+		productCount,
 	});
 	//res.status(200).json({ message: "Get all products route working fine " });
 });
