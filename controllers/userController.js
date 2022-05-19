@@ -17,13 +17,44 @@ const RegisterUser = CatchAsyncError(async (req, res, next) => {
 			url: "profilePicURL",
 		},
 	});
+	const token = user.getJwtToken();
 
 	res.status(201).json({
 		success: true,
-		user,
+		token,
 	});
 }); //resgiter a user controoller
 
+//login a user ...
+const loginUser = CatchAsyncError(async (req, res, next) => {
+	const { email, password } = req.body;
+	//check if the User has provided bot email and password
+
+	if (!email || !password) {
+		return next(new ErrorHander("Provide both email and password !", 400));
+	}
+
+	//find the user
+	const user = await User.findOne({
+		email: email,
+	}).select("+password");
+	if (!user) {
+		return next(new ErrorHander("Invalid email OR password !", 401));
+	}
+
+	const isPasswordMatched = user.comparePassword(password);
+	if (!isPasswordMatched) {
+		return next(new ErrorHander("Invalid password OR Emial!", 401));
+	}
+	//if everything is ok
+	const token = user.getJwtToken();
+	res.status(200).json({
+		success: true,
+		token,
+	});
+}); //login user
+
 module.exports = {
 	RegisterUser,
+	loginUser,
 };
