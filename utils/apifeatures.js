@@ -35,7 +35,17 @@ class ApiFeatures {
 		this.query = this.query.find(JSON.parse(queryStr)); ///filter by category
 		console.log(queryStr);
 		return this;
-	}
+	} //filter ..
+
+	pagination(resultsPerPage) {
+		const currentPage = Number(this.queryStr.page) || 1;
+		//Now suppose theree are 50 items and on 1 page we want to show 10 items ..
+		//then we need to skip some items based on that . Suppose if the current page we are looking for is 1
+		//then 0 pages will be skipped and  we will show 10 items . If the current page we are looking for is 2 then we need to skip 1st 10 items  and so on ..
+		const skipped = resultsPerPage * (currentPage - 1); //how many items to be skipped /..
+		this.query = this.query.limit(resultsPerPage).skip(skipped);
+		return this;
+	} //pagination  ..
 }
 
 module.exports = ApiFeatures;

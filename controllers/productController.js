@@ -14,9 +14,12 @@ const createProduct = CatchAsyncError(async (req, res, next) => {
 //get all products ..
 // ?set the filtering and searching  functionality
 const getAllProducts = CatchAsyncError(async (req, res) => {
+	const resultsPerPage = 5; //per page 5 items //
+
 	const apifeature = new ApiFeatures(Product.find({}), req.query)
 		.search()
-		.filter(); //api feature class
+		.filter()
+		.pagination(resultsPerPage); //api feature class
 
 	const products = await apifeature.query;
 	res.status(200).json({
