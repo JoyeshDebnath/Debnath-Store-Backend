@@ -1,4 +1,5 @@
 const User = require("../models/userModel");
+const sendToken = require("../utils/jwtTokens");
 const CatchAsyncError = require("../middlewares/catchAsyncErrors");
 const ErrorHander = require("../utils/error-handler");
 
@@ -6,7 +7,7 @@ const ErrorHander = require("../utils/error-handler");
 const RegisterUser = CatchAsyncError(async (req, res, next) => {
 	//take the name ,email and password of the user from request body
 	const { name, email, password } = req.body;
-	console.log(name, email, password);
+	// console.log(name, email, password);
 	//create a new user ..
 	const user = await User.create({
 		name,
@@ -17,12 +18,8 @@ const RegisterUser = CatchAsyncError(async (req, res, next) => {
 			url: "profilePicURL",
 		},
 	});
-	const token = user.getJwtToken();
 
-	res.status(201).json({
-		success: true,
-		token,
-	});
+	sendToken(user, 201, res);
 }); //resgiter a user controoller
 
 //login a user ...
@@ -47,14 +44,25 @@ const loginUser = CatchAsyncError(async (req, res, next) => {
 		return next(new ErrorHander("Invalid password OR Emial!", 401));
 	}
 	//if everything is ok
-	const token = user.getJwtToken();
+
+	sendToken(user, 200, res);
+}); //login user
+
+//user logout ..
+const logout = CatchAsyncError(async (req, res, next) => {
+	res.cookie("token", null, {
+		expires: new Date(Date.now()),
+		httpOnly: true,
+	});
+
 	res.status(200).json({
 		success: true,
-		token,
+		message: "Logged Out!",
 	});
-}); //login user
+});
 
 module.exports = {
 	RegisterUser,
 	loginUser,
+	logout,
 };

@@ -4,6 +4,8 @@ const CatchAsyncError = require("../middlewares/catchAsyncErrors");
 const ApiFeatures = require("../utils/apifeatures");
 //create a products ..ADMIN
 const createProduct = CatchAsyncError(async (req, res, next) => {
+	req.body.user = req.user.id;
+
 	const product = await Product.create(req.body);
 	res.status(201).json({
 		success: true,
