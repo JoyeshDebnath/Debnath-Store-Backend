@@ -82,10 +82,55 @@ const getProduct = CatchAsyncError(async (req, res, next) => {
 	});
 });
 
+//create reviews and update reviews if already created....
+const createProductReview = CatchAsyncError(async (req, res, next) => {
+	const { rating, comment, productId } = req.body;
+
+	const review = {
+		user: req.user._id,
+		name: req.user.name,
+		rating: Number(rating),
+		comment,
+	};
+	const product = await Product.findById(productId);
+
+	//NOTE: check if the poduct with given id was already reviewd aerlier or not ....
+
+	const isReviewed = product.reviews.find(
+		(rev) => rev.user.toString() === req.user._id.toString()
+	);
+	if (isReviewed) {
+		//if already reviewd then update the review part
+		product.reviews.forEach((rev) => {
+			if (rev.user.toString() === req.user._id.toString()) {
+				rev.rating = rating;
+				rev.comment = comment;
+			}
+		});
+	} else {
+		product.reviews.push(review);
+		//update the number of reviews if a new review entered
+		product.numOfReviews = product.reviews.length;
+	}
+
+	//find the overall rating for the given product ......
+	let avg = 0;
+
+	product.reviews.forEach((rev) => {
+		avg += rev.rating;
+	});
+	product.ratings = avg / product.reviews.length;
+	await product.save({ validateBeforeSave: false });
+	res.status(200).json({
+		success: true,
+	});
+});
+
 module.exports = {
 	getAllProducts,
 	createProduct,
 	updateProduct,
 	deleteProduct,
 	getProduct,
+	createProductReview,
 };
