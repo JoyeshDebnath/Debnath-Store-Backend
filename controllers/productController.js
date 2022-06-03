@@ -147,9 +147,9 @@ const deleteProductReview = CatchAsyncError(async (req, res, next) => {
 		return next(new ErrorHander("Product Not Found!", 404));
 	}
 	//TODO  delete the required product review from all the reviews
-	const reviews = product.reviews.filter((rev) => {
-		rev._id.toString() !== req.query.id.toString();
-	});
+	const reviews = product.reviews.filter(
+		(rev) => rev._id.toString() !== req.query.id.toString()
+	);
 
 	let avg = 0;
 	reviews.forEach((rev) => {

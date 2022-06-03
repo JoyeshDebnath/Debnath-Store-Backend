@@ -9,7 +9,6 @@ const {
 	getProduct,
 	createProductReview,
 	getProductReviews,
-
 	deleteProductReview,
 } = require("../controllers/productController");
 
