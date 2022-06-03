@@ -139,14 +139,14 @@ const getProductReviews = CatchAsyncError(async (req, res, next) => {
 	});
 });
 
-//TODO delete the product review
+// delete the product review
 
 const deleteProductReview = CatchAsyncError(async (req, res, next) => {
 	const product = await Product.findById(req.query.productId);
 	if (!product) {
 		return next(new ErrorHander("Product Not Found!", 404));
 	}
-	//TODO  delete the required product review from all the reviews
+	//  delete the required product review from all the reviews
 	const reviews = product.reviews.filter(
 		(rev) => rev._id.toString() !== req.query.id.toString()
 	);
