@@ -15,9 +15,11 @@ const createProduct = CatchAsyncError(async (req, res, next) => {
 
 //get all products ..
 // ?set the filtering and searching  functionality
-const getAllProducts = CatchAsyncError(async (req, res) => {
-	const resultsPerPage = 5; //per page 5 items //
-	const productCount = await Product.countDocuments();
+const getAllProducts = CatchAsyncError(async (req, res, next) => {
+	// return next(new ErrorHander("This is my temporary Error"));
+
+	const resultsPerPage = 8; //per page 5 items //
+	const productsCount = await Product.countDocuments();
 
 	const apifeature = new ApiFeatures(Product.find({}), req.query)
 		.search()
@@ -28,7 +30,8 @@ const getAllProducts = CatchAsyncError(async (req, res) => {
 	res.status(200).json({
 		success: true,
 		products,
-		productCount,
+		productsCount,
+		resultsPerPage,
 	});
 	//res.status(200).json({ message: "Get all products route working fine " });
 });

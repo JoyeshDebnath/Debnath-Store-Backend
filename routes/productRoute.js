@@ -21,9 +21,9 @@ router
 	.put(isAuthenticatedUser, authorizedRoles("admin"), updateProduct)
 	.get(getProduct)
 	.delete(isAuthenticatedUser, authorizedRoles("admin"), deleteProduct);
-
+//get a single product
 router.route("/product/:id").get(getProduct);
-
+//get reviews and create reviews
 router.route("/review").put(isAuthenticatedUser, createProductReview);
 
 router
